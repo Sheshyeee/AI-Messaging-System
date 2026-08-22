@@ -16,13 +16,13 @@ export default function Welcome() {
                 {/* Base gradient wash — near-black, never flat */}
                 <div
                     aria-hidden
-                    className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,255,255,0.06),transparent),linear-gradient(180deg,#0a0a0b_0%,#101012_50%,#0a0a0b_100%)]"
+                    className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,255,255,0.07),transparent),linear-gradient(180deg,#0a0a0b_0%,#101012_50%,#0a0a0b_100%)]"
                 />
 
-                {/* Faint structural grid, masked so it fades toward the edges */}
+                {/* Structural grid — a real design element now, not a whisper */}
                 <div
                     aria-hidden
-                    className="pointer-events-none fixed inset-0 -z-10 [background-image:linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_65%_45%_at_50%_10%,#000_35%,transparent_100%)]"
+                    className="pointer-events-none fixed inset-0 -z-10 [background-image:linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_75%_60%_at_50%_15%,#000_45%,transparent_100%)]"
                 />
 
                 {/* Grain — keeps the black from reading flat/AI-slick */}
@@ -106,16 +106,16 @@ export default function Welcome() {
                         </div>
                     </section>
 
-                    {/* Product showcase — the real app, not a mockup */}
-                    <section className="mx-auto max-w-4xl px-6 pb-28 sm:pb-36">
+                    {/* Product showcase — wider than the hero column, the real app, not a mockup */}
+                    <section className="mx-auto max-w-6xl px-4 pb-28 sm:px-8 sm:pb-36">
                         <div className="relative">
                             {/* Ambient glow borrowed from the product's own online-status green */}
                             <div
                                 aria-hidden
-                                className="pointer-events-none absolute -inset-x-10 -top-16 -bottom-16 -z-10 bg-[radial-gradient(ellipse_60%_60%_at_50%_35%,rgba(34,197,94,0.08),transparent_70%)]"
+                                className="pointer-events-none absolute -inset-x-16 -top-20 -bottom-20 -z-10 bg-[radial-gradient(ellipse_55%_60%_at_50%_35%,rgba(34,197,94,0.09),transparent_70%)]"
                             />
 
-                            <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0f] shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_40px_80px_-30px_rgba(0,0,0,0.8)]">
+                            <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d0d0f] shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_40px_80px_-30px_rgba(0,0,0,0.85)]">
                                 <img
                                     src="/cover.png"
                                     alt="Nexus chat interface showing a live group conversation with Smart Reply suggestions"
@@ -123,7 +123,7 @@ export default function Welcome() {
                                 />
                             </div>
 
-                            <p className="mt-4 font-['JetBrains_Mono',monospace] text-[11px] tracking-wide text-white/30 uppercase">
+                            <p className="mt-4 text-center font-['JetBrains_Mono',monospace] text-[11px] tracking-wide text-white/30 uppercase">
                                 A real conversation, not a mockup
                             </p>
                         </div>
