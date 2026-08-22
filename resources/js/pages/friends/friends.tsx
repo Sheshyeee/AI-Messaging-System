@@ -1,4 +1,5 @@
 import { FriendsSidebar } from '@/components/friends-sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -14,7 +15,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface FriendRequestItem {
     id: number;
-    sender: { id: number; name: string; email: string };
+    sender: { id: number; name: string; email: string; avatar_url?: string | null };
     created_at: string;
 }
 
@@ -24,6 +25,7 @@ interface UserItem {
     id: number;
     name: string;
     email: string;
+    avatar_url?: string | null;
     status: UserStatus;
     request_id: number | null;
 }
@@ -115,9 +117,15 @@ export default function Friends({ requests, users }: FriendsProps) {
                                             className="border-sidebar-border/70 bg-background dark:border-sidebar-border flex flex-col gap-3 rounded-xl border p-3 sm:flex-row sm:items-center sm:justify-between"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="bg-muted text-muted-foreground flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
-                                                    {getInitials(req.sender.name)}
-                                                </div>
+                                                <Avatar className="size-10 shrink-0">
+                                                    {req.sender.avatar_url ? (
+                                                        <AvatarImage src={req.sender.avatar_url} alt={req.sender.name} />
+                                                    ) : (
+                                                        <AvatarFallback className="text-sm font-semibold">
+                                                            {getInitials(req.sender.name)}
+                                                        </AvatarFallback>
+                                                    )}
+                                                </Avatar>
                                                 <div className="flex min-w-0 flex-col">
                                                     <span className="truncate text-sm font-medium">{req.sender.name}</span>
                                                     <span className="text-muted-foreground text-xs">{req.created_at}</span>
@@ -165,9 +173,13 @@ export default function Friends({ requests, users }: FriendsProps) {
                                         key={user.id}
                                         className="border-sidebar-border/70 bg-background dark:border-sidebar-border flex flex-col items-center gap-3 rounded-xl border p-4 text-center"
                                     >
-                                        <div className="bg-muted text-muted-foreground flex size-16 items-center justify-center rounded-full text-lg font-semibold">
-                                            {getInitials(user.name)}
-                                        </div>
+                                        <Avatar className="size-16">
+                                            {user.avatar_url ? (
+                                                <AvatarImage src={user.avatar_url} alt={user.name} />
+                                            ) : (
+                                                <AvatarFallback className="text-lg font-semibold">{getInitials(user.name)}</AvatarFallback>
+                                            )}
+                                        </Avatar>
 
                                         <div className="flex min-w-0 flex-col">
                                             <span className="truncate text-sm font-medium">{user.name}</span>

@@ -1,4 +1,5 @@
 import { FriendsSidebar } from '@/components/friends-sidebar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
@@ -20,6 +21,7 @@ interface UserItem {
     id: number;
     name: string;
     email: string;
+    avatar_url?: string | null;
 }
 
 interface SuggestionsProps {
@@ -76,9 +78,13 @@ export default function Suggestions({ users }: SuggestionsProps) {
                                     key={user.id}
                                     className="border-sidebar-border/70 bg-background dark:border-sidebar-border flex flex-col items-center gap-3 rounded-xl border p-4 text-center"
                                 >
-                                    <div className="bg-muted text-muted-foreground flex size-16 items-center justify-center rounded-full text-lg font-semibold">
-                                        {getInitials(user.name)}
-                                    </div>
+                                    <Avatar className="size-16">
+                                        {user.avatar_url ? (
+                                            <AvatarImage src={user.avatar_url} alt={user.name} />
+                                        ) : (
+                                            <AvatarFallback className="text-lg font-semibold">{getInitials(user.name)}</AvatarFallback>
+                                        )}
+                                    </Avatar>
 
                                     <div className="flex min-w-0 flex-col">
                                         <span className="truncate text-sm font-medium">{user.name}</span>

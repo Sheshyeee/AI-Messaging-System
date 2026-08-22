@@ -14,14 +14,19 @@ class ContactsController extends Controller
         $userId = $request->user()->id;
 
         // Pending requests sent TO me
-        $requests = FriendRequest::with('sender:id,name,email')
+        $requests = FriendRequest::with('sender:id,name,email,avatar')
             ->where('receiver_id', $userId)
             ->where('status', 'pending')
             ->latest()
             ->get()
             ->map(fn($fr) => [
                 'id' => $fr->id,
-                'sender' => $fr->sender,
+                'sender' => [
+                    'id' => $fr->sender->id,
+                    'name' => $fr->sender->name,
+                    'email' => $fr->sender->email,
+                    'avatar_url' => $fr->sender->avatar_url,
+                ],
                 'created_at' => $fr->created_at->diffForHumans(),
             ]);
 
@@ -51,7 +56,7 @@ class ContactsController extends Controller
         };
 
         $users = User::where('id', '!=', $userId)
-            ->select('id', 'name', 'email')
+            ->select('id', 'name', 'email', 'avatar')
             ->orderBy('name')
             ->get()
             ->map(function ($user) use ($statusFor) {
@@ -61,6 +66,7 @@ class ContactsController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
+                    'avatar_url' => $user->avatar_url,
                     'status' => $info['status'],
                     'request_id' => $info['request_id'],
                 ];
@@ -88,9 +94,15 @@ class ContactsController extends Controller
 
         $users = User::where('id', '!=', $userId)
             ->whereNotIn('id', $connectedIds)
-            ->select('id', 'name', 'email')
+            ->select('id', 'name', 'email', 'avatar')
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->map(fn($user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'avatar_url' => $user->avatar_url,
+            ]);
 
         return inertia('friends/suggestions', [
             'users' => $users,
@@ -128,7 +140,7 @@ class ContactsController extends Controller
 
     public function requests(Request $request)
     {
-        $requests = FriendRequest::with('sender:id,name,email')
+        $requests = FriendRequest::with('sender:id,name,email,avatar')
             ->where('receiver_id', $request->user()->id)
             ->where('status', 'pending')
             ->latest()
@@ -136,7 +148,12 @@ class ContactsController extends Controller
             ->map(function ($friendRequest) {
                 return [
                     'id' => $friendRequest->id,
-                    'sender' => $friendRequest->sender,
+                    'sender' => [
+                        'id' => $friendRequest->sender->id,
+                        'name' => $friendRequest->sender->name,
+                        'email' => $friendRequest->sender->email,
+                        'avatar_url' => $friendRequest->sender->avatar_url,
+                    ],
                     'created_at' => $friendRequest->created_at->diffForHumans(),
                 ];
             });
@@ -163,11 +180,12 @@ class ContactsController extends Controller
 
         return back()->with('status', 'Friend request declined.');
     }
+
     public function allFriends(Request $request)
     {
         $userId = $request->user()->id;
 
-        $friends = FriendRequest::with(['sender:id,name,email', 'receiver:id,name,email'])
+        $friends = FriendRequest::with(['sender:id,name,email,avatar', 'receiver:id,name,email,avatar'])
             ->where('status', 'accepted')
             ->where(function ($query) use ($userId) {
                 $query->where('sender_id', $userId)
@@ -184,6 +202,7 @@ class ContactsController extends Controller
                     'id' => $friend->id,
                     'name' => $friend->name,
                     'email' => $friend->email,
+                    'avatar_url' => $friend->avatar_url,
                     'friends_since' => $friendRequest->updated_at->diffForHumans(),
                 ];
             });
