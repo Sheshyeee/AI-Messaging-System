@@ -132,22 +132,24 @@ class DatabaseSeeder extends Seeder
         $realUsers = User::whereNotIn('email', $seededEmails)->get();
 
         foreach ($realUsers as $realUser) {
-            // Friend the real user with me + the first 3 demo friends.
+            // Friend the real user with me.
             $this->upsertFriendRequest($me->id, $realUser->id, 'accepted');
 
-            foreach ($accepted->take(3) as $demoFriend) {
-                $this->upsertFriendRequest($realUser->id, $demoFriend->id, 'accepted');
+            // Friend with ALL demo users so Friends/All friends is populated too.
+            foreach ($users as $demoUser) {
+                $this->upsertFriendRequest($realUser->id, $demoUser->id, 'accepted');
             }
 
             // 1:1 conversation + messages with "me".
             $withMe = Conversation::between($realUser->id, $me->id);
             $this->seedConversationMessages($withMe, $realUser, $me, 0);
 
-            // 1:1 conversation + messages with one demo friend too, so the
-            // chat list isn't just a single thread.
-            $demoFriend = $accepted[1];
-            $withFriend = Conversation::between($realUser->id, $demoFriend->id);
-            $this->seedConversationMessages($withFriend, $realUser, $demoFriend, 1);
+            // 1:1 conversations + messages with 6 demo friends, so the chat list
+            // has real, distinct threads instead of just one or two.
+            foreach ($users->take(6) as $i => $demoFriend) {
+                $conversation = Conversation::between($realUser->id, $demoFriend->id);
+                $this->seedConversationMessages($conversation, $realUser, $demoFriend, $i + 1);
+            }
 
             // Add them into the group chat.
             $group->participants()->syncWithoutDetaching([$realUser->id]);

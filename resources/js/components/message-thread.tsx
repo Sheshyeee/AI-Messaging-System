@@ -942,7 +942,7 @@ export function MessageThread({
 
             {/* Messages */}
             <MessageScrollerProvider autoScroll defaultScrollPosition="end">
-                <MessageScroller className="flex-1 px-4 py-4">
+                <MessageScroller className="scrollbar-thin flex-1 px-4 py-4">
                     <MessageScrollerViewport>
                         <MessageScrollerContent>
                             {timeline.map((entry, index) => {

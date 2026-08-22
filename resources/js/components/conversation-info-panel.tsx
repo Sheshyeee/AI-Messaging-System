@@ -104,20 +104,14 @@ export function ConversationInfoPanel({
             {/* Header */}
             <div className="border-sidebar-border/70 dark:border-sidebar-border flex shrink-0 items-center justify-between border-b px-4 py-3.5">
                 <h2 className="text-sm font-semibold">Conversation info</h2>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 rounded-full"
-                    aria-label="Close conversation info"
-                    onClick={onClose}
-                >
+                <Button variant="ghost" size="icon" className="size-8 rounded-full" aria-label="Close conversation info" onClick={onClose}>
                     <X className="size-4" />
                 </Button>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            <div className="scrollbar-thin flex-1 overflow-y-auto">
                 {/* Profile */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border bg-black flex flex-col items-center gap-2 border-b px-4 py-7">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border bg-muted/30 flex flex-col items-center gap-2 border-b px-4 py-7">
                     <div className="relative">
                         <Avatar className="size-20 overflow-hidden">
                             {avatarUrl ? (
@@ -153,7 +147,7 @@ export function ConversationInfoPanel({
 
                         {isGroup && participants.length > 0 && (
                             <label
-                                className="bg-primary text-primary-foreground border-background focus-within:ring-ring focus-within:ring-offset-background absolute -right-1 -bottom-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 shadow-sm transition-transform hover:scale-105 focus-within:ring-2 focus-within:ring-offset-2 active:scale-95"
+                                className="bg-primary text-primary-foreground border-background focus-within:ring-ring focus-within:ring-offset-background absolute -right-1 -bottom-1 flex size-7 cursor-pointer items-center justify-center rounded-full border-2 shadow-sm transition-transform focus-within:ring-2 focus-within:ring-offset-2 hover:scale-105 active:scale-95"
                                 aria-label="Change group avatar"
                             >
                                 <input type="file" name="avatar" accept="image/*" className="sr-only" onChange={handleAvatarChange} />
@@ -198,10 +192,7 @@ export function ConversationInfoPanel({
                         ) : (
                             <div className="flex flex-col gap-0.5">
                                 {participants.map((p) => (
-                                    <div
-                                        key={p.id}
-                                        className="hover:bg-accent/60 flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors"
-                                    >
+                                    <div key={p.id} className="hover:bg-accent/60 flex items-center gap-2.5 rounded-xl px-2 py-1.5 transition-colors">
                                         <div className="relative shrink-0">
                                             <Avatar className="size-9">
                                                 {p.avatar ? (
@@ -272,7 +263,7 @@ export function ConversationInfoPanel({
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     download={a.name}
-                                    className="hover:bg-accent focus-visible:ring-ring flex items-center gap-3 rounded-xl border border-sidebar-border/70 px-3 py-2.5 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 dark:border-sidebar-border"
+                                    className="hover:bg-accent focus-visible:ring-ring border-sidebar-border/70 dark:border-sidebar-border flex items-center gap-3 rounded-xl border px-3 py-2.5 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                                 >
                                     <div className="bg-muted text-muted-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                                         {a.kind === 'pdf' ? <FileText className="size-4" /> : <FileIcon className="size-4" />}
