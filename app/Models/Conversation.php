@@ -23,7 +23,7 @@ class Conversation extends Model
     {
         if ($this->is_group) {
             return $this->avatar_path
-                ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->avatar_path)
+                ? Storage::disk('s3')->url($this->avatar_path)
                 : null;
         }
 
