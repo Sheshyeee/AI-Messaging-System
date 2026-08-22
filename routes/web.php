@@ -11,6 +11,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::redirect('/dashboard', '/chats')->name('dashboard');
+
     Route::get('/friends', [ContactsController::class, 'index']);
     Route::get('/friends/suggestions', [ContactsController::class, 'suggestions']);
     Route::get('friends/requests', [ContactsController::class, 'requests'])->name('friends.requests');
@@ -33,6 +35,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/chats/{conversation}/smart-replies', [ChatController::class, 'smartReplies'])->name('chats.smartReplies');
 });
-
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
