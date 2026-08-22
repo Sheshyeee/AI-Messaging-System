@@ -34,10 +34,10 @@ class ProfileController extends Controller
         $user = $request->user();
 
         if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
+            Storage::disk('s3')->delete($user->avatar);
         }
 
-        $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        $user->avatar = $request->file('avatar')->store('avatars', 's3');
         $user->save();
 
         return to_route('profile.edit');
@@ -51,7 +51,7 @@ class ProfileController extends Controller
         $user = $request->user();
 
         if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
+            Storage::disk('s3')->delete($user->avatar);
             $user->avatar = null;
             $user->save();
         }

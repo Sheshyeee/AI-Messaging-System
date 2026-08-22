@@ -128,10 +128,10 @@ class ChatController extends Controller
         $files = $request->file('attachments', []);
 
         foreach ($files as $file) {
-            $path = $file->store('attachments/' . $conversation->id, 'public');
+            $path = $file->store('attachments/' . $conversation->id, 's3');
 
             $message->attachments()->create([
-                'disk' => 'public',
+                'disk' => 's3',
                 'path' => $path,
                 'original_name' => $file->getClientOriginalName(),
                 'mime_type' => $file->getClientMimeType(),
@@ -167,7 +167,7 @@ class ChatController extends Controller
             'avatar' => ['required', 'file', 'image', 'max:' . self::MAX_ATTACHMENT_KB],
         ]);
 
-        $path = $request->file('avatar')->store('conversation-avatars/' . $conversation->id, 'public');
+        $path = $request->file('avatar')->store('conversation-avatars/' . $conversation->id, 's3');
         $conversation->update(['avatar_path' => $path]);
 
         return back();
