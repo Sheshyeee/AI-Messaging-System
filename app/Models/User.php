@@ -34,9 +34,16 @@ class User extends Authenticatable  implements MustVerifyEmail
 
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->avatar
-            ? Storage::disk('s3')->url($this->avatar)
-            : null;
+        if (!$this->avatar) {
+            return null;
+        }
+
+        // Seeded/demo avatars are stored as full URLs already — pass through.
+        if (str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+            return $this->avatar;
+        }
+
+        return Storage::disk('s3')->url($this->avatar);
     }
     /**
      * The attributes that should be hidden for serialization.
