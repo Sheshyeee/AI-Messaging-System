@@ -117,7 +117,7 @@ export function ConversationInfoPanel({
 
             <div className="flex-1 overflow-y-auto">
                 {/* Profile */}
-                <div className="border-sidebar-border/70 dark:border-sidebar-border bg-muted/30 flex flex-col items-center gap-2 border-b px-4 py-7">
+                <div className="border-sidebar-border/70 dark:border-sidebar-border bg-black flex flex-col items-center gap-2 border-b px-4 py-7">
                     <div className="relative">
                         <Avatar className="size-20 overflow-hidden">
                             {avatarUrl ? (

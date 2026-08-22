@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
             );
         });
 
-        // --- Friend requests -------------------------------------------------
+        // --- Friend requests (demo user <-> demo user) --------------------
 
         $accepted = $users->take(4);
 
@@ -63,37 +63,14 @@ class DatabaseSeeder extends Seeder
 
         // $users[6] Mia, $users[7] Lucas intentionally left unconnected
 
-        // --- 1:1 conversations with the accepted friends ----------------------
+        // --- 1:1 conversations for the demo "me" account -------------------
 
         $conversations = [];
 
         foreach ($accepted as $i => $friend) {
             $conversation = Conversation::between($me->id, $friend->id);
             $conversations[] = $conversation;
-
-            // Only seed messages the first time this conversation is empty,
-            // so re-running db:seed doesn't pile up duplicate messages.
-            if ($conversation->messages()->exists()) {
-                continue;
-            }
-
-            $lines = [
-                ['from' => $friend, 'body' => 'Hey! Long time no chat 👋'],
-                ['from' => $me, 'body' => "I know, it's been way too long!"],
-                ['from' => $friend, 'body' => 'We should catch up soon.'],
-                ['from' => $me, 'body' => 'Definitely, are you free this weekend?'],
-                ['from' => $friend, 'body' => 'Yeah! Saturday works for me.'],
-            ];
-
-            foreach ($lines as $j => $line) {
-                $conversation->messages()->create([
-                    'sender_id' => $line['from']->id,
-                    'body' => $line['body'],
-                    'read_at' => $j < 4 ? now()->subMinutes(60 - $j * 10) : null,
-                    'created_at' => now()->subMinutes((5 - $j) * 12 + $i),
-                    'updated_at' => now()->subMinutes((5 - $j) * 12 + $i),
-                ]);
-            }
+            $this->seedConversationMessages($conversation, $me, $friend, $i);
         }
 
         // React to the last message of the first conversation, once.
@@ -105,7 +82,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // --- A group conversation with several friends -------------------------
+        // --- Group conversation with the demo friends -----------------------
 
         $group = Conversation::query()
             ->where('is_group', true)
@@ -120,7 +97,6 @@ class DatabaseSeeder extends Seeder
                 'Weekend Crew'
             );
         } else {
-            // Make sure all expected members are still attached even on re-run.
             $group->participants()->syncWithoutDetaching(
                 [$me->id, ...$accepted->pluck('id')->all()]
             );
@@ -145,6 +121,37 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // --- Connect EVERY real, already-existing account into the network ---
+        // Whatever account you actually log in with (signed up through the
+        // real registration form) gets friended with the demo users and a
+        // few populated conversations, plus a seat in the group chat.
+
+        $seededEmails = $users->pluck('email')->push('test@example.com');
+
+        $realUsers = User::whereNotIn('email', $seededEmails)->get();
+
+        foreach ($realUsers as $realUser) {
+            // Friend the real user with me + the first 3 demo friends.
+            $this->upsertFriendRequest($me->id, $realUser->id, 'accepted');
+
+            foreach ($accepted->take(3) as $demoFriend) {
+                $this->upsertFriendRequest($realUser->id, $demoFriend->id, 'accepted');
+            }
+
+            // 1:1 conversation + messages with "me".
+            $withMe = Conversation::between($realUser->id, $me->id);
+            $this->seedConversationMessages($withMe, $realUser, $me, 0);
+
+            // 1:1 conversation + messages with one demo friend too, so the
+            // chat list isn't just a single thread.
+            $demoFriend = $accepted[1];
+            $withFriend = Conversation::between($realUser->id, $demoFriend->id);
+            $this->seedConversationMessages($withFriend, $realUser, $demoFriend, 1);
+
+            // Add them into the group chat.
+            $group->participants()->syncWithoutDetaching([$realUser->id]);
+        }
     }
 
     /**
@@ -157,5 +164,34 @@ class DatabaseSeeder extends Seeder
             ['sender_id' => $senderId, 'receiver_id' => $receiverId],
             ['status' => $status]
         );
+    }
+
+    /**
+     * Seed a short back-and-forth in a 1:1 conversation, only if it's empty,
+     * so re-running db:seed doesn't pile up duplicate messages.
+     */
+    private function seedConversationMessages(Conversation $conversation, User $userA, User $userB, int $offset = 0): void
+    {
+        if ($conversation->messages()->exists()) {
+            return;
+        }
+
+        $lines = [
+            ['from' => $userB, 'body' => 'Hey! Long time no chat 👋'],
+            ['from' => $userA, 'body' => "I know, it's been way too long!"],
+            ['from' => $userB, 'body' => 'We should catch up soon.'],
+            ['from' => $userA, 'body' => 'Definitely, are you free this weekend?'],
+            ['from' => $userB, 'body' => 'Yeah! Saturday works for me.'],
+        ];
+
+        foreach ($lines as $j => $line) {
+            $conversation->messages()->create([
+                'sender_id' => $line['from']->id,
+                'body' => $line['body'],
+                'read_at' => $j < 4 ? now()->subMinutes(60 - $j * 10) : null,
+                'created_at' => now()->subMinutes((5 - $j) * 12 + $offset),
+                'updated_at' => now()->subMinutes((5 - $j) * 12 + $offset),
+            ]);
+        }
     }
 }
