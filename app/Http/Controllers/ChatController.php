@@ -65,7 +65,7 @@ class ChatController extends Controller
                 'isGroup' => $conversation->is_group,
                 'avatarUrl' => $conversation->avatar_url,
                 'participants' => $conversation->is_group
-                    ? $conversation->participants->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'avatar' => $p->avatar ?? null])->values()
+                    ? $conversation->participants->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'avatar' => $p->avatar_url])->values()
                     : [],
             ],
             'messages' => fn() => $this->messagesFor($conversation, $userId),
@@ -201,7 +201,7 @@ class ChatController extends Controller
                         ->where('id', '!=', $userId)
                         ->shuffle()
                         ->take(2)
-                        ->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'avatar' => $p->avatar ?? null])
+                        ->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'avatar' => $p->avatar_url])
                         ->values()
                         : [],
                     'participant_ids' => $conversation->is_group
